@@ -2364,6 +2364,7 @@ lnet_parse(lnet_ni_t *ni, lnet_hdr_t *hdr, lnet_nid_t from_nid,
 
         msg->msg_ev.sender = from_nid;
 
+        lnet_print_hdr(&msg->msg_hdr);
         switch (type) {
         case LNET_MSG_ACK:
                 rc = lnet_parse_ack(ni, msg);
