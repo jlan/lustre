@@ -287,6 +287,8 @@ srpc_post_passive_rdma(int portal, __u64 matchbits, void *buf,
         lnet_md_t        md;
         lnet_handle_me_t meh;
 
+        CDEBUG (D_NET, "len = %d\n", len);
+
         rc = LNetMEAttach(portal, peer, matchbits, 0,
                           LNET_UNLINK, LNET_INS_AFTER, &meh);
         if (rc != 0) {
@@ -332,6 +334,8 @@ srpc_post_active_rdma(int portal, __u64 matchbits, void *buf, int len,
         md.eq_handle = srpc_data.rpc_lnet_eq;
         md.threshold = ((options & LNET_MD_OP_GET) != 0) ? 2 : 1;
         md.options   = options & ~(LNET_MD_OP_PUT | LNET_MD_OP_GET);
+
+        CDEBUG (D_NET, "md.length %d\n", len);
 
         rc = LNetMDBind(md, LNET_UNLINK, mdh);
         if (rc != 0) {
@@ -645,6 +649,7 @@ srpc_send_request (srpc_client_rpc_t *rpc)
         srpc_event_t *ev = &rpc->crpc_reqstev;
         int           rc;
 
+        CDEBUG (D_NET, "enter\n");
         ev->ev_fired = 0;
         ev->ev_data  = rpc;
         ev->ev_type  = SRPC_REQUEST_SENT;
@@ -666,6 +671,7 @@ srpc_prepare_reply (srpc_client_rpc_t *rpc)
         __u64        *id = &rpc->crpc_reqstmsg.msg_body.reqst.rpyid;
         int           rc;
 
+        CDEBUG (D_NET, "enter\n");
         ev->ev_fired = 0;
         ev->ev_data  = rpc;
         ev->ev_type  = SRPC_REPLY_RCVD;
@@ -692,6 +698,7 @@ srpc_prepare_bulk (srpc_client_rpc_t *rpc)
         int           rc;
         int           opt;
 
+        CDEBUG (D_NET, "enter\n");
         LASSERT (bk->bk_niov <= LNET_MAX_IOV);
 
         if (bk->bk_niov == 0) return 0; /* nothing to do */
@@ -848,6 +855,7 @@ srpc_handle_rpc (swi_workitem_t *wi)
                 srpc_msg_t           *msg;
                 srpc_generic_reply_t *reply;
 
+                CDEBUG (D_NET, "NEWBORN\n");
                 msg = &rpc->srpc_reqstbuf->buf_msg;
                 reply = &rpc->srpc_replymsg.msg_body.reply;
 
@@ -885,6 +893,7 @@ srpc_handle_rpc (swi_workitem_t *wi)
         case SWI_STATE_BULK_STARTED:
                 LASSERT (rpc->srpc_bulk == NULL || ev->ev_fired);
 
+                CDEBUG (D_NET, "BULK_STARTED\n");
                 if (rpc->srpc_bulk != NULL) {
                         rc = ev->ev_status;
 
@@ -905,6 +914,7 @@ srpc_handle_rpc (swi_workitem_t *wi)
                 return 1;
 
         case SWI_STATE_REPLY_SUBMITTED:
+                CDEBUG (D_NET, "REPLY_SUBMITTED\n");
                 if (!ev->ev_fired) {
                         CERROR("RPC %p: bulk %p, service %d\n",
                                rpc, rpc->srpc_bulk, rpc->srpc_service->sv_id);
@@ -1052,6 +1062,7 @@ srpc_send_rpc (swi_workitem_t *wi)
         case SWI_STATE_NEWBORN:
                 LASSERT (!srpc_event_pending(rpc));
 
+                CDEBUG (D_NET, "NEWBORN\n");
                 rc = srpc_prepare_reply(rpc);
                 if (rc != 0) {
                         srpc_client_rpc_done(rpc, rc);
@@ -1069,6 +1080,7 @@ srpc_send_rpc (swi_workitem_t *wi)
                 /* CAVEAT EMPTOR: rqtev, rpyev, and bulkev may come in any
                  * order; however, they're processed in a strict order:
                  * rqt, rpy, and bulk. */
+                CDEBUG (D_NET, "REQUEST_SUBMITTED\n");
                 if (!rpc->crpc_reqstev.ev_fired) break;
 
                 rc = rpc->crpc_reqstev.ev_status;
@@ -1079,6 +1091,7 @@ srpc_send_rpc (swi_workitem_t *wi)
         case SWI_STATE_REQUEST_SENT: {
                 srpc_msg_type_t type = srpc_service2reply(rpc->crpc_service);
 
+                CDEBUG (D_NET, "REQUEST_SENT\n");
                 if (!rpc->crpc_replyev.ev_fired) break;
 
                 rc = rpc->crpc_replyev.ev_status;
@@ -1108,6 +1121,7 @@ srpc_send_rpc (swi_workitem_t *wi)
                 wi->swi_state = SWI_STATE_REPLY_RECEIVED;
         }
         case SWI_STATE_REPLY_RECEIVED:
+                CDEBUG (D_NET, "REPLY_RECEIVED\n");
                 if (do_bulk && !rpc->crpc_bulkev.ev_fired) break;
 
                 rc = do_bulk ? rpc->crpc_bulkev.ev_status : 0;
