@@ -2122,39 +2122,39 @@ lnet_print_hdr(lnet_hdr_t * hdr)
         dst.nid = hdr->dest_nid;
         dst.pid = hdr->dest_pid;
 
-        CWARN("P3 Header at %p of type %s\n", hdr, type_str);
-        CWARN("    From %s\n", libcfs_id2str(src));
-        CWARN("    To   %s\n", libcfs_id2str(dst));
+        CDEBUG (D_NET, "P3 Header at %p of type %s\n", hdr, type_str);
+        CDEBUG (D_NET, "    From %s\n", libcfs_id2str(src));
+        CDEBUG (D_NET, "    To   %s\n", libcfs_id2str(dst));
 
         switch (hdr->type) {
         default:
                 break;
 
         case LNET_MSG_PUT:
-                CWARN("    Ptl index %d, ack md "LPX64"."LPX64", "
+                CDEBUG (D_NET, "    Ptl index %d, ack md "LPX64"."LPX64", "
                       "match bits "LPU64"\n",
                       hdr->msg.put.ptl_index,
                       hdr->msg.put.ack_wmd.wh_interface_cookie,
                       hdr->msg.put.ack_wmd.wh_object_cookie,
                       hdr->msg.put.match_bits);
-                CWARN("    Length %d, offset %d, hdr data "LPX64"\n",
+                CDEBUG (D_NET, "    Length %d, offset %d, hdr data "LPX64"\n",
                       hdr->payload_length, hdr->msg.put.offset,
                       hdr->msg.put.hdr_data);
                 break;
 
         case LNET_MSG_GET:
-                CWARN("    Ptl index %d, return md "LPX64"."LPX64", "
+                CDEBUG (D_NET, "    Ptl index %d, return md "LPX64"."LPX64", "
                       "match bits "LPU64"\n", hdr->msg.get.ptl_index,
                       hdr->msg.get.return_wmd.wh_interface_cookie,
                       hdr->msg.get.return_wmd.wh_object_cookie,
                       hdr->msg.get.match_bits);
-                CWARN("    Length %d, src offset %d\n",
+                CDEBUG (D_NET, "    Length %d, src offset %d\n",
                       hdr->msg.get.sink_length,
                       hdr->msg.get.src_offset);
                 break;
 
         case LNET_MSG_ACK:
-                CWARN("    dst md "LPX64"."LPX64", "
+                CDEBUG (D_NET, "    dst md "LPX64"."LPX64", "
                       "manipulated length %d\n",
                       hdr->msg.ack.dst_wmd.wh_interface_cookie,
                       hdr->msg.ack.dst_wmd.wh_object_cookie,
@@ -2162,7 +2162,7 @@ lnet_print_hdr(lnet_hdr_t * hdr)
                 break;
 
         case LNET_MSG_REPLY:
-                CWARN("    dst md "LPX64"."LPX64", "
+                CDEBUG (D_NET, "    dst md "LPX64"."LPX64", "
                       "length %d\n",
                       hdr->msg.reply.dst_wmd.wh_interface_cookie,
                       hdr->msg.reply.dst_wmd.wh_object_cookie,

@@ -737,6 +737,9 @@ srpc_do_bulk (srpc_server_rpc_t *rpc)
 
         LASSERT (bk != NULL);
 
+        CDEBUG (D_NET, "%s\n",
+                bk->bk_sink ? "LNET_MD_OP_GET" : "LNET_MD_OP_PUT");
+
         opt = bk->bk_sink ? LNET_MD_OP_GET : LNET_MD_OP_PUT;
 #ifdef __KERNEL__
         opt |= LNET_MD_KIOV;
@@ -855,7 +858,7 @@ srpc_handle_rpc (swi_workitem_t *wi)
                 srpc_msg_t           *msg;
                 srpc_generic_reply_t *reply;
 
-                CDEBUG (D_NET, "NEWBORN\n");
+                CDEBUG (D_NET, "NEWBORN, srpc_bulk=%x\n", rpc->srpc_bulk);
                 msg = &rpc->srpc_reqstbuf->buf_msg;
                 reply = &rpc->srpc_replymsg.msg_body.reply;
 
@@ -1287,6 +1290,7 @@ srpc_lnet_ev_handler (lnet_event_t *ev)
                        rpcev->ev_status, rpcev->ev_type, rpcev->ev_lnet);
                 LBUG ();
         case SRPC_REQUEST_SENT:
+                CDEBUG (D_NET, "srpc event SRPC_REQUEST_SENT\n");
                 if (ev->status == 0 && ev->type != LNET_EVENT_UNLINK) {
                         cfs_spin_lock(&srpc_data.rpc_glock);
                         srpc_data.rpc_counters.rpcs_sent++;
@@ -1294,6 +1298,9 @@ srpc_lnet_ev_handler (lnet_event_t *ev)
                 }
         case SRPC_REPLY_RCVD:
         case SRPC_BULK_REQ_RCVD:
+                CDEBUG (D_NET, "srpc event %s\n",
+                        rpcev->ev_type == SRPC_REPLY_RCVD ?
+                        "SRPC_REPLY_RCVD" : "SRPC_BULK_REQ_RCVD");
                 crpc = rpcev->ev_data;
 
                 if (rpcev != &crpc->crpc_reqstev &&
@@ -1319,6 +1326,7 @@ srpc_lnet_ev_handler (lnet_event_t *ev)
                 break;
 
         case SRPC_REQUEST_RCVD:
+                CDEBUG (D_NET, "srpc event SRPC_REQUEST_RCVD\n");
                 sv = rpcev->ev_data;
 
                 LASSERT (rpcev == &sv->sv_ev);
@@ -1388,6 +1396,7 @@ srpc_lnet_ev_handler (lnet_event_t *ev)
                 break;
 
         case SRPC_BULK_GET_RPLD:
+                CDEBUG (D_NET, "srpc event SRPC_BULK_GET_RPLD\n");
                 LASSERT (ev->type == LNET_EVENT_SEND ||
                          ev->type == LNET_EVENT_REPLY ||
                          ev->type == LNET_EVENT_UNLINK);
@@ -1396,6 +1405,7 @@ srpc_lnet_ev_handler (lnet_event_t *ev)
                         break; /* wait for final event */
 
         case SRPC_BULK_PUT_SENT:
+                CDEBUG (D_NET, "srpc event SRPC_BULK_PUT_SENT\n");
                 if (ev->status == 0 && ev->type != LNET_EVENT_UNLINK) {
                         cfs_spin_lock(&srpc_data.rpc_glock);
 
@@ -1407,6 +1417,7 @@ srpc_lnet_ev_handler (lnet_event_t *ev)
                         cfs_spin_unlock(&srpc_data.rpc_glock);
                 }
         case SRPC_REPLY_SENT:
+                CDEBUG (D_NET, "srpc event SRPC_REPLY_SENT\n");
                 srpc = rpcev->ev_data;
                 sv = srpc->srpc_service;
 
