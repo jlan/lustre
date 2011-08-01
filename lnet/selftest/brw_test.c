@@ -405,7 +405,7 @@ brw_server_handle (srpc_server_rpc_t *rpc)
         }
 
         reply->brw_status = 0;
-        CDEBUG(D_NET, "About to call sfw_alloc_pages, reqst->brw_len=%lu, CFS_PAGE_SIZE=%lu\n",
+        CDEBUG(D_NET, "About to call sfw_alloc_pages, reqst->brw_len=%u, CFS_PAGE_SIZE=%lu\n",
                reqst->brw_len, CFS_PAGE_SIZE);
         rc = sfw_alloc_pages(rpc, reqst->brw_len / CFS_PAGE_SIZE,
                              reqst->brw_rw == LST_BRW_WRITE);
