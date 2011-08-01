@@ -134,7 +134,7 @@ srpc_alloc_bulk (int npages, int sink)
 
         LASSERT (npages > 0 && npages <= LNET_MAX_IOV);
 
-        CDEBUG(D_NET, "npages=%d, sink=%d, offsetof/size=%d\n",
+        CDEBUG(D_NET, "npages=%d, sink=%d, offsetof/size=%lu\n",
                npages, sink, offsetof(srpc_bulk_t, bk_iovs[npages]));
         LIBCFS_ALLOC(bk, offsetof(srpc_bulk_t, bk_iovs[npages]));
         if (bk == NULL) {
@@ -860,7 +860,7 @@ srpc_handle_rpc (swi_workitem_t *wi)
                 srpc_msg_t           *msg;
                 srpc_generic_reply_t *reply;
 
-                CDEBUG (D_NET, "NEWBORN, srpc_bulk=%x\n", rpc->srpc_bulk);
+                CDEBUG (D_NET, "NEWBORN\n");
                 msg = &rpc->srpc_reqstbuf->buf_msg;
                 reply = &rpc->srpc_replymsg.msg_body.reply;
 
