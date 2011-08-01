@@ -134,6 +134,8 @@ srpc_alloc_bulk (int npages, int sink)
 
         LASSERT (npages > 0 && npages <= LNET_MAX_IOV);
 
+        CDEBUG(D_NET, "npages=%d, sink=%d, offsetof/size=%d\n",
+               npages, sink, offsetof(srpc_bulk_t, bk_iovs[npages]));
         LIBCFS_ALLOC(bk, offsetof(srpc_bulk_t, bk_iovs[npages]));
         if (bk == NULL) {
                 CERROR ("Can't allocate descriptor for %d pages\n", npages);
