@@ -401,6 +401,7 @@ brw_server_handle (srpc_server_rpc_t *rpc)
              reqst->brw_flags != LST_BRW_CHECK_FULL &&
              reqst->brw_flags != LST_BRW_CHECK_SIMPLE)) {
                 reply->brw_status = EINVAL;
+                CDEBUG(D_NET, "FAIL, reqst_brw_len=%u\n", reqst->brw_len);
                 return 0;
         }
 

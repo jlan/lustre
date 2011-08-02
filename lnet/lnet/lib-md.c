@@ -137,9 +137,11 @@ lib_md_build(lnet_libmd_t *lmd, lnet_md_t *umd, int unlink)
                                 return -EINVAL;
 
                         total_length += lmd->md_iov.iov[i].iov_len;
+                        CDEBUG(D_NET, "1 total_length = %d\n", total_length);
                 }
 
                 lmd->md_length = total_length;
+                CDEBUG(D_NET, "1 lmd->md_length = %u\n", lmd->md_length);
 
                 if ((umd->options & LNET_MD_MAX_SIZE) != 0 && /* max size used */
                     (umd->max_size < 0 ||
@@ -161,9 +163,11 @@ lib_md_build(lnet_libmd_t *lmd, lnet_md_t *umd, int unlink)
                                 return -EINVAL; /* invalid length */
 
                         total_length += lmd->md_iov.kiov[i].kiov_len;
+                        CDEBUG(D_NET, "2 total_length = %d\n", total_length);
                 }
 
                 lmd->md_length = total_length;
+                CDEBUG(D_NET, "2 lmd->md_length = %u\n", lmd->md_length);
 
                 if ((umd->options & LNET_MD_MAX_SIZE) != 0 && /* max size used */
                     (umd->max_size < 0 ||
@@ -172,6 +176,7 @@ lib_md_build(lnet_libmd_t *lmd, lnet_md_t *umd, int unlink)
 #endif
         } else {   /* contiguous */
                 lmd->md_length = umd->length;
+                CDEBUG(D_NET, "3 lmd->md_length = %u\n", lmd->md_length);
                 lmd->md_niov = niov = 1;
                 lmd->md_iov.iov[0].iov_base = umd->start;
                 lmd->md_iov.iov[0].iov_len = umd->length;

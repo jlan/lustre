@@ -88,6 +88,8 @@ lnet_try_match_md (int index, int op_mask, lnet_process_id_t src,
 
         /* Hurrah! This _is_ a match; check it out... */
 
+        CDEBUG(D_NET, "md_max_size=%u, md_length=%u, md_offset=%u, roffset=%u, rlength=%u\n",
+               md->md_max_size, md->md_length, md->md_offset, roffset, rlength);
         if ((md->md_options & LNET_MD_MANAGE_REMOTE) == 0)
                 offset = md->md_offset;
         else

@@ -330,6 +330,7 @@ srpc_post_active_rdma(int portal, __u64 matchbits, void *buf, int len,
         int       rc;
         lnet_md_t md;
 
+        memset(&md, 0, sizeof(md));
         md.user_ptr  = ev;
         md.start     = buf;
         md.length    = len;
