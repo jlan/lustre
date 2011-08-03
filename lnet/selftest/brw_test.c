@@ -194,6 +194,8 @@ brw_fill_bulk (srpc_bulk_t *bk, int pattern, __u64 magic)
         int         i;
         cfs_page_t *pg;
 
+        CDEBUG(D_NET, "bk->bk_niov=%d\n", bk->bk_niov);
+
         for (i = 0; i < bk->bk_niov; i++) {
 #ifdef __KERNEL__
                 pg = bk->bk_iovs[i].kiov_page;

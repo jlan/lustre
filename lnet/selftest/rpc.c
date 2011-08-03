@@ -1097,7 +1097,7 @@ srpc_send_rpc (swi_workitem_t *wi)
         case SWI_STATE_REQUEST_SENT: {
                 srpc_msg_type_t type = srpc_service2reply(rpc->crpc_service);
 
-                CDEBUG (D_NET, "REQUEST_SENT\n");
+                CDEBUG (D_NET, "REQUEST_SENT, type=%d\n", type);
                 if (!rpc->crpc_replyev.ev_fired) break;
 
                 rc = rpc->crpc_replyev.ev_status;
