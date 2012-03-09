@@ -163,14 +163,17 @@ cd $RPM_BUILD_DIR/lustre-%{version}
 # override %optflags so that the vendor's overzealous flags don't create
 # build failures
 %define optflags -g -O2 -Werror
+
 %if %{with lustre_tests}
 %define conf_tests --enable-tests --enable-liblustre-tests
 %else
 %define conf_tests --disable-tests --disable-liblustre-tests
 %endif
+%if %{without servers}
+%define conf_disable_server --disable-server
+%endif
 
 CONFIGURE_ARGS="--with-release=%release %{?conf_tests} %{?conf_disable_server} %{?configure_args}"
-%endif
 
 # if %%kdir was given, make sure it's not in the configure arguments
 if [ -n "%kdir" ]; then
