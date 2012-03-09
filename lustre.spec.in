@@ -10,20 +10,6 @@
   %{error:"with zfs" is not compatible with "without servers"}
 %endif
 
-%{!?version: %global version @VERSION@}
-
-# as an alternative to this implementation we could simply "make -C $kdir kernelversion"
-%{!?kversion: %global kversion %(if test -s %kobjdir/include/linux/utsrelease.h ; then LINUXRELEASEHEADER=utsrelease.h; else LINUXRELEASEHEADER=version.h; fi; sed -ne '/^#define UTS_RELEASE/s/.*"\\(.*\\)"$/\\1/p' %kobjdir/include/linux/$LINUXRELEASEHEADER)}
-
-%{!?downstream_release: %global downstream_release "@DOWNSTREAM_RELEASE@"}
-
-%define buildid %(if [ -n "@BUILDID@" ]; then echo "_@BUILDID@"; fi)
-
-%{!?myrelease: %global myrelease %(if [ -n "%downstream_release" ]; then echo -n "%{downstream_release}_"; fi; echo %kversion | tr '-' '_')}
-
-# always append the buildid, even when the caller defines %release
-%define fullrelease %{myrelease}%{buildid}
-
 %if %{undefined lustre_name}
   %if %{with servers}
     %global lustre_name lustre
@@ -31,26 +17,6 @@
     %global lustre_name lustre-client
   %endif
 %endif
-
-# in order to get kernel symset and/or kernel module dependencies into
-# the RPM, in order to support weak-modules, the internal dependency gen-
-# erator needs to be disabled
-# this is done with (reduce the double % down to a single %):
-#
-# %%global _use_internal_dependency_generator 0
-#
-# on SLES10, /usr/lib/rpm/macros already sets this, so no harm in also
-# defining it here (until Suse changes their mind)
-#
-# on RHEL5, however, we do need to explicitly disable the internal dep-
-# endency generator and allow the external one be used
-# but since RedHat's kABI is only a subset of the total kernel ABI, it
-# doesn't include all of the symbols we (or OFED for that matter) need
-# until RedHat includes all of the symbols we need in their symsets we
-# cannot support weak-modules
-# we did e-mail the maintainer of all of this stuff @redhat but got no
-# response from them
-#%%global _use_internal_dependency_generator 0
 
 # RHEL 6.x / CHAOS 5.x
 %if 0%{?el6}
@@ -84,6 +50,41 @@
 %{!?kver: %global kver ""}
 %{!?kdir: %global kdir %(dir=$(echo "%configure_args" | sed -ne 's/.*--with-linux=\\([^ ][^ ]*\\).*$/\\1/p'); if [ -n "$dir" ]; then echo "$dir"; else if [ -n "%kver" ]; then kversion="%kver"; else kversion="$(uname -r)"; fi; echo "/lib/modules/$kversion/source"; fi)}
 %{!?kobjdir: %global kobjdir %(dir=$(echo "%configure_args" | sed -ne 's/.*--with-linux-obj=\\([^ ][^ ]*\\).*$/\\1/p'); if [ -n "$dir" ]; then echo "$dir"; else if [ -n "%kver" ]; then kversion="%kver"; else kversion="$(uname -r)"; fi; if [ "%kdir" = "/lib/modules/$kversion/source" ]; then echo "/lib/modules/$kversion/build"; else echo "%kdir"; fi; fi)}
+
+
+%{!?version: %global version @VERSION@}
+
+# as an alternative to this implementation we could simply "make -C $kdir kernelversion"
+%{!?kversion: %global kversion %(if test -s %kobjdir/include/linux/utsrelease.h ; then LINUXRELEASEHEADER=utsrelease.h; else LINUXRELEASEHEADER=version.h; fi; sed -ne '/^#define UTS_RELEASE/s/.*"\\(.*\\)"$/\\1/p' %kobjdir/include/linux/$LINUXRELEASEHEADER)}
+
+%{!?downstream_release: %global downstream_release "@DOWNSTREAM_RELEASE@"}
+
+%define buildid %(if [ -n "@BUILDID@" ]; then echo "_@BUILDID@"; fi)
+
+%{!?myrelease: %global myrelease %(if [ -n "%downstream_release" ]; then echo -n "%{downstream_release}_"; fi; echo %kversion | tr '-' '_')}
+
+# always append the buildid, even when the caller defines %release
+%define fullrelease %{myrelease}%{buildid}
+
+# in order to get kernel symset and/or kernel module dependencies into
+# the RPM, in order to support weak-modules, the internal dependency gen-
+# erator needs to be disabled
+# this is done with (reduce the double % down to a single %):
+#
+# %%global _use_internal_dependency_generator 0
+#
+# on SLES10, /usr/lib/rpm/macros already sets this, so no harm in also
+# defining it here (until Suse changes their mind)
+#
+# on RHEL5, however, we do need to explicitly disable the internal dep-
+# endency generator and allow the external one be used
+# but since RedHat's kABI is only a subset of the total kernel ABI, it
+# doesn't include all of the symbols we (or OFED for that matter) need
+# until RedHat includes all of the symbols we need in their symsets we
+# cannot support weak-modules
+# we did e-mail the maintainer of all of this stuff @redhat but got no
+# response from them
+#%%global _use_internal_dependency_generator 0
 
 
 Summary: Lustre File System
