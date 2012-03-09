@@ -29,6 +29,7 @@
     %global lustre_name lustre
   %else
     %global lustre_name lustre-client
+  %endif
 %endif
 
 # in order to get kernel symset and/or kernel module dependencies into
