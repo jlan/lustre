@@ -64,6 +64,21 @@
 # always append the buildid, even when the caller defines %release
 %define fullrelease %{myrelease}%{buildid}
 
+# The kernel version should only be appended to a binary RPM.  When
+# building a source RPM it must be kernel version agnostic.  This means
+# the source RPM must never specify a required kernel version, but the
+# final RPM should be keyed to the kernel version it was built against.
+%if %{defined build_src_rpm}
+  %undefine buildrequires
+  %undefine modules_requires
+%endif
+
+%{echo:buildrequires is %{buildrequires}
+}
+%{echo:modules_requires is %{modules_requires}
+}
+
+
 # in order to get kernel symset and/or kernel module dependencies into
 # the RPM, in order to support weak-modules, the internal dependency gen-
 # erator needs to be disabled
