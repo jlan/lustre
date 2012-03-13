@@ -18,23 +18,30 @@
   %endif
 %endif
 
+%define empty_string() %(if [ -z "%{1}" ]; then echo 1; else echo 0; fi)
+%define nonempty_string() %(if [ -n "%{1}" ]; then echo 1; else echo 0; fi)
+
 # RHEL 6.x / CHAOS 5.x
 %if %{defined el6}
   %define klnk %{_usrsrc}/kernels/*/include/config
   %{!?kver: %global kver %((echo ""; %{__cat} %{klnk}/kernel.release 2>/dev/null) | tail -1)}
+  %{!?kverpkg: %global kverpkg %(echo %{kver} | %{__sed} -e 's/.%{_target_cpu}//g')}
   %{!?kdir: %global kdir %{_usrsrc}/kernels/%{kver}}
   %{!?kobjdir: %global kobjdir %kdir}
   %{!?kversion: %global kversion %kver}
+  %{echo: kver is %{kver}}
   %if %{undefined buildrequires}
     %if %{with servers}
       %define br_arg2 kernel-debuginfo-common-%{_target_cpu}
     %endif
     %global buildrequires kernel-devel %{?br_arg2}
   %endif
-  %if %{undefined modules_requires}
-    %global modules_requires kernel = %(echo %{kver} | %{__sed} -e 's/.%{_target_cpu}//g')
+  %if %{undefined modules_requires} && %{nonempty_string %{kverpkg}}
+      %global modules_requires kernel = %{kverpkg}
   %endif
 %endif
+%{echo: kverpkg is %{?kverpkg}}
+%{echo: modules_requires is %{?modules_requires}}
 
 # SLES
 %if %{defined suse_version}
