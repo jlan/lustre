@@ -112,7 +112,9 @@ BuildRoot: %{_tmppath}/lustre-%{version}-root
 Obsoletes: lustre-lite, lustre-lite-utils, lustre-ldap nfs-utils-lustre
 Provides: lustre-lite = %{version}, lustre-lite-utils = %{version}
 Requires: %{name}-modules = %{version}
-BuildRequires: %{?buildrequires}
+%if %{defined buildrequires}
+BuildRequires: %{buildrequires}
+%endif
 %if %{with zfs}
 BuildRequires: spl-modules-devel zfs-modules-devel zfs-devel
 %endif
@@ -122,7 +124,9 @@ Userspace tools and files for the Lustre file system.
 
 %package modules
 Summary: Kernel Lustre modules for Linux %{kversion}
-Requires: %{?modules_requires}
+%if %{defined modules_requires}
+Requires: %{modules_requires}
+%endif
 %if %{with servers}
 Requires: lustre-backend-fs
 %endif
