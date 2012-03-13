@@ -19,11 +19,12 @@
 %endif
 
 # RHEL 6.x / CHAOS 5.x
-%if 0%{?el6}
+%if %{defined el6}
   %define klnk %{_usrsrc}/kernels/*/include/config
   %{!?kver: %global kver %((echo ""; %{__cat} %{klnk}/kernel.release 2>/dev/null) | tail -1)}
-  %{!?kdir: %global kdir %(dir=$(echo "%configure_args" | sed -ne 's/.*--with-linux=\\([^ ][^ ]*\\).*$/\\1/p'); if [ -n "$dir" ]; then echo "$dir"; else if [ -n "%kver" ]; then kversion="%kver"; else kversion="$(uname -r)"; fi; echo "%{_usrsrc}/kernels/$kversion"; fi)}
+  %{!?kdir: %global kdir %{_usrsrc}/kernels/%{kver}}
   %{!?kobjdir: %global kobjdir %kdir}
+  %{!?kversion: %global kversion %kver}
   %if %{undefined buildrequires}
     %if %{with servers}
       %define br_arg2 kernel-debuginfo-common-%{_target_cpu}
@@ -31,10 +32,7 @@
     %global buildrequires kernel-devel %{?br_arg2}
   %endif
   %if %{undefined modules_requires}
-    # for those uses that don't want the -smp/-bigsmp
-    # (or the .arch) on the end of %kversion
-    %define krequires %(bash -c "echo %{kversion} | sed -e 's/\.x86_64$//' -e 's/\.i[3456]86$//' -e 's/-smp$//' -e 's/-bigsmp$//' -e 's/-ppc64$//' -e 's/-default$//'")
-    %global modules_requires kernel=%{krequires}
+    %global modules_requires kernel=%(echo %{kver} | %{__sed} -e 's/.%{_target_cpu}//g')
   %endif
 %endif
 
