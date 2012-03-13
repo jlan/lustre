@@ -32,7 +32,7 @@
     %global buildrequires kernel-devel %{?br_arg2}
   %endif
   %if %{undefined modules_requires}
-    %global modules_requires kernel=%(echo %{kver} | %{__sed} -e 's/.%{_target_cpu}//g')
+    %global modules_requires kernel = %(echo %{kver} | %{__sed} -e 's/.%{_target_cpu}//g')
   %endif
 %endif
 
