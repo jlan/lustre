@@ -51,12 +51,6 @@
   %endif
 %endif
 
-# Other platforms
-%{!?kver: %global kver ""}
-%{!?kdir: %global kdir %(dir=$(echo "%configure_args" | sed -ne 's/.*--with-linux=\\([^ ][^ ]*\\).*$/\\1/p'); if [ -n "$dir" ]; then echo "$dir"; else if [ -n "%kver" ]; then kversion="%kver"; else kversion="$(uname -r)"; fi; echo "/lib/modules/$kversion/source"; fi)}
-%{!?kobjdir: %global kobjdir %(dir=$(echo "%configure_args" | sed -ne 's/.*--with-linux-obj=\\([^ ][^ ]*\\).*$/\\1/p'); if [ -n "$dir" ]; then echo "$dir"; else if [ -n "%kver" ]; then kversion="%kver"; else kversion="$(uname -r)"; fi; if [ "%kdir" = "/lib/modules/$kversion/source" ]; then echo "/lib/modules/$kversion/build"; else echo "%kdir"; fi; fi)}
-
-
 %{!?version: %global version @VERSION@}
 
 # as an alternative to this implementation we could simply "make -C $kdir kernelversion"
@@ -199,24 +193,11 @@ cd $RPM_BUILD_DIR/lustre-%{version}
 %define conf_disable_server --disable-server
 %endif
 
-CONFIGURE_ARGS="--with-release=%release %{?conf_tests} %{?conf_disable_server} %{?configure_args}"
-
-# if %%kdir was given, make sure it's not in the configure arguments
-if [ -n "%kdir" ]; then
-	CONFIGURE_ARGS=$(echo $CONFIGURE_ARGS | sed -e 's/"\?--with-linux=[^ ][^ ]* \?//')
-fi
-# ditto for %%kobjdir
-if [ -n "%kobjdir" ]; then
-	CONFIGURE_ARGS=$(echo $CONFIGURE_ARGS | sed -e 's/"\?--with-linux-obj=[^ ][^ ]* \?//')
-fi
-
-# we need to eval "configure" because $CONFIGURE_ARGS could have a quoted
-# string in it which we don't want word splitted by the shell
-%define eval_configure %(echo '%configure' | sed -e 's#\./configure#eval ./configure#')
-
-%eval_configure \
+%configure \
+        %{?configure_args} \
+        --with-release=%release %{?conf_tests} %{?conf_disable_server}  \
 	%{?kdir: --with-linux=%kdir} %{?kobjdir: --with-linux-obj=%kobjdir} \
-	$CONFIGURE_ARGS
+        %{?configure_args_override}
 make -j $RPM_BUILD_NCPUS -s
 
 %install
