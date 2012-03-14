@@ -79,28 +79,6 @@
 %{echo:modules_requires is %{modules_requires}
 }
 
-
-# in order to get kernel symset and/or kernel module dependencies into
-# the RPM, in order to support weak-modules, the internal dependency gen-
-# erator needs to be disabled
-# this is done with (reduce the double % down to a single %):
-#
-# %%global _use_internal_dependency_generator 0
-#
-# on SLES10, /usr/lib/rpm/macros already sets this, so no harm in also
-# defining it here (until Suse changes their mind)
-#
-# on RHEL5, however, we do need to explicitly disable the internal dep-
-# endency generator and allow the external one be used
-# but since RedHat's kABI is only a subset of the total kernel ABI, it
-# doesn't include all of the symbols we (or OFED for that matter) need
-# until RedHat includes all of the symbols we need in their symsets we
-# cannot support weak-modules
-# we did e-mail the maintainer of all of this stuff @redhat but got no
-# response from them
-#%%global _use_internal_dependency_generator 0
-
-
 Summary: Lustre File System
 Name: %{lustre_name}
 Version: %{version}
