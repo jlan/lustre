@@ -46,7 +46,7 @@
 %if %{nonempty_string @DOWNSTREAM_RELEASE@}
   %define rel_down @DOWNSTREAM_RELEASE@
 %endif
-%if %{defined kverpkg}
+%if %{defined kverpkg} && %{undefined build_src_rpm}
   %define rel_kver %(echo %{kverpkg} | tr '-' '_')
 %endif
 %if %{nonempty_string @BUILDID@}
