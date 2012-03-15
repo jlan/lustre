@@ -62,7 +62,7 @@
 %if %{defined kverpkg} && %{defined rel_build}
   %define us2 _
 %endif
-%global release %{?rel_down}%{?us1}%{rel_kver}%{?us2}%{?rel_build}
+%global release %{?rel_down}%{?us1}%{?rel_kver}%{?us2}%{?rel_build}
 
 # Set the package name prefix
 %if %{undefined name}
