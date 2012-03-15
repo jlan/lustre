@@ -52,14 +52,14 @@
 %if %{nonempty_string @BUILDID@}
   %define rel_build @BUILDID@
 %endif
-%if %{defined rel_down} && %{defined kverpkg}
+%if %{defined rel_down} && %{defined rel_kver}
   %define us1 _
 %else
   %if %{defined rel_down} && %{defined rel_build}
     %define us1 _
   %endif
 %endif
-%if %{defined kverpkg} && %{defined rel_build}
+%if %{defined rel_kver} && %{defined rel_build}
   %define us2 _
 %endif
 %global release %{?rel_down}%{?us1}%{?rel_kver}%{?us2}%{?rel_build}
