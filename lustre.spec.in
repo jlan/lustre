@@ -90,7 +90,7 @@
 }
 
 Summary: Lustre File System
-Name: %{lustre_name}
+Name: %{name}
 Version: %{version}
 Release: %{release}
 License: GPL
