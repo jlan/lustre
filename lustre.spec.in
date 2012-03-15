@@ -92,7 +92,7 @@
 Summary: Lustre File System
 Name: %{name}
 Version: %{version}
-Release: %{release}
+Release: %{release}%{!?build_src_rpm:%{?dist}}
 License: GPL
 Group: Utilities/System
 Source: lustre-%{version}.tar.gz
