@@ -18,7 +18,7 @@
 %if %{defined el6}
   %define klnk %{_usrsrc}/kernels/*/include/config
   %{!?kver: %global kver %((echo ""; %{__cat} %{klnk}/kernel.release 2>/dev/null) | tail -1)}
-  %{!?kverpkg: %global kverpkg %(echo %{kver} | %{__sed} -e 's/.%{_target_cpu}//g')}
+  %{!?kverpkg: %global kverpkg %(echo %{kver} | %{__sed} -e 's/.%{_target_cpu}$//g')}
   %{!?kdir: %global kdir %{_usrsrc}/kernels/%{kver}}
   %{!?kobjdir: %global kobjdir %kdir}
   %if %{undefined buildrequires}
