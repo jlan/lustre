@@ -739,6 +739,9 @@ if $1; then
 			LDISKFS_SERIES="2.6-rhel5-ext4.series"
 		fi
 		;;
+	2.6.32-343*)
+		LDISKFS_SERIES="2.6-rhel6.4.series"
+		;;
 	2.6.32*)
 		if test x$RHEL_KERNEL = xyes; then
 			LDISKFS_SERIES="2.6-rhel6.series"
