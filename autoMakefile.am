@@ -84,8 +84,3 @@ module-dist-hook:
 		echo -e "I have no idea how to create a META file in $(distdir).\nPlease file a bug at http://bugzilla.lustre.org/"; \
 		exit 1; \
 	fi
-if LDISKFS_ENABLED
-	if [ -f $(distdir)/META -a -d $(distdir)/ldiskfs ]; then \
-		cp $(distdir)/META $(distdir)/ldiskfs/META; \
-	fi
-endif
