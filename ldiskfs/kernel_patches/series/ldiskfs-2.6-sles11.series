@@ -1,3 +1,4 @@
+config_ldiskfs.patch
 ext4-wantedi-2.6-rhel6.patch
 ext4-map_inode_page-2.6.18-rhel5.patch
 export-ext4-2.6-rhel6.patch
